@@ -53,6 +53,12 @@ resource "porkbun_dns_record" "rss" {
   type    = "CNAME"
   content = "node0.jpatrick.io"
 }
+resource "porkbun_dns_record" "audiobooks" {
+  name    = "audiobooks"
+  domain  = "jpatrick.io"
+  type    = "CNAME"
+  content = "node.jpatrick.io"
+}
 resource "porkbun_dns_record" "rss2" {
   name    = "rss2"
   domain  = "jpatrick.io"
