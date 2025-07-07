@@ -4,10 +4,16 @@ data "http" "external_ip" {
   url = "http://ipv4.icanhazip.com"
 }
 
-provider "porkbun" {
-  api_key    = var.porkbun_api_key
-  secret_key = var.porkbun_secret_key
+data "onepassword_item" "porkbun" {
+  vault = data.onepassword_vault.infrastructure.uuid
+  title = "porkbun"
 }
+
+provider "porkbun" {
+  api_key    = data.onepassword_item.porkbun.username
+  secret_key = data.onepassword_item.porkbun.credential
+}
+
 resource "porkbun_dns_record" "node0" {
   name    = "node0"
   domain  = "jpatrick.io"

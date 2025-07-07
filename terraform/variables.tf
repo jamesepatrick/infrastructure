@@ -57,12 +57,3 @@ variable "miniflux_db_pass" {
   description = "miniflux postgres database passphrase"
 }
 
-variable "porkbun_api_key" {
-  type        = string
-  description = "api key for DNS provider Porkbun"
-}
-
-variable "porkbun_secret_key" {
-  type        = string
-  description = "secret key to be used in parallel with porkbun_api_key for DNS provider Porkbun"
-}
