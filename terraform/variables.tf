@@ -8,21 +8,6 @@ variable "protonmail_dkim" {
   description = "Your Protonmail DKIM public key"
 }
 
-variable "github_token" {
-  type        = string
-  description = "Your Github OAuth token"
-}
-
-variable "github_owner" {
-  type        = string
-  description = "The owner of the Github repository"
-}
-
-variable "github_name" {
-  type        = string
-  description = "The name of the Github repository"
-}
-
 variable "miniflux_admin_user" {
   type        = string
   description = "miniflux admin username"
