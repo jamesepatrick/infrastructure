@@ -23,12 +23,6 @@ variable "github_name" {
   description = "The name of the Github repository"
 }
 
-variable "hcloud_token" {
-  sensitive   = true
-  type        = string
-  description = "API token to access Hetzner's Cloud resources."
-}
-
 variable "tailscale_token" {
   sensitive   = true
   type        = string

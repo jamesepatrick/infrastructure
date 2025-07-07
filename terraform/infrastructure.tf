@@ -1,5 +1,10 @@
+data "onepassword_item" "hcloud_token" {
+  vault = data.onepassword_vault.infrastructure.uuid
+  title = "hetzner"
+}
+
 provider "hcloud" {
-  token = var.hcloud_token
+  token = data.onepassword_item.hcloud_token.credential
 }
 
 resource "hcloud_floating_ip" "primary_ip" {
