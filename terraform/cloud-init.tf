@@ -7,18 +7,18 @@ data "onepassword_item" "miniflux" {
 locals {
   section = {
     miniflux = {
-      admin    = [for section in data.onepassword_item.miniflux.section : section if section.label == "admin"]
-      database = [for section in data.onepassword_item.miniflux.section : section if section.label == "database"]
+      admin    = [for section in data.onepassword_item.miniflux.section : section if section.label == "admin"][0]
+      database = [for section in data.onepassword_item.miniflux.section : section if section.label == "database"][0]
     }
   }
   miniflux = {
     admin = {
-      user = [for field in local.section.miniflux.admin[0].field : field.value if field.label == "user"][0]
-      pass = [for field in local.section.miniflux.admin[0].field : field.value if field.label == "password"][0]
+      user = [for field in local.section.miniflux.admin.field : field.value if field.label == "user"][0]
+      pass = [for field in local.section.miniflux.admin.field : field.value if field.label == "password"][0]
     }
     database = {
-      owner = [for field in local.section.miniflux.database[0].field : field.value if field.label == "owner"][0]
-      pass  = [for field in local.section.miniflux.database[0].field : field.value if field.label == "password"][0]
+      owner = [for field in local.section.miniflux.database.field : field.value if field.label == "owner"][0]
+      pass  = [for field in local.section.miniflux.database.field : field.value if field.label == "password"][0]
     }
   }
 }

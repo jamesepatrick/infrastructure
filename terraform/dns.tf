@@ -83,12 +83,11 @@ data "onepassword_item" "protonmail" {
   title = "protonmail"
 }
 
-
 locals {
   # In OP anything not in the schema for the datatype is stored in a section with an empty label.
-  protonmail_section      = [for section in data.onepassword_item.protonmail.section : section if section.label == ""]
-  protonmail_verification = [for field in local.protonmail_section[0].field : field.value if field.label == "verification"][0]
-  protonmail_dkim         = [for field in local.protonmail_section[0].field : field.value if field.label == "dkim"][0]
+  protonmail_section      = [for section in data.onepassword_item.protonmail.section : section if section.label == ""][0]
+  protonmail_verification = [for field in local.protonmail_section.field : field.value if field.label == "verification"][0]
+  protonmail_dkim         = [for field in local.protonmail_section.field : field.value if field.label == "dkim"][0]
 }
 
 resource "porkbun_dns_record" "mail" {
