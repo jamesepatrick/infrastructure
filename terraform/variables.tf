@@ -1,13 +1,3 @@
-variable "protonmail_verification" {
-  type        = string
-  description = "Verification code for Protonmail"
-}
-
-variable "protonmail_dkim" {
-  type        = string
-  description = "Your Protonmail DKIM public key"
-}
-
 variable "miniflux_admin_user" {
   type        = string
   description = "miniflux admin username"

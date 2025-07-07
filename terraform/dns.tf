@@ -78,6 +78,19 @@ resource "porkbun_dns_record" "traefik" {
   content = hcloud_server.node.ipv4_address
 }
 
+data "onepassword_item" "protonmail" {
+  vault = data.onepassword_vault.infrastructure.uuid
+  title = "protonmail"
+}
+
+
+locals {
+  # In OP anything not in the schema for the datatype is stored in a section with an empty label.
+  protonmail_section      = [for section in data.onepassword_item.protonmail.section : section if section.label == ""]
+  protonmail_verification = [for field in local.protonmail_section[0].field : field.value if field.label == "verification"][0]
+  protonmail_dkim         = [for field in local.protonmail_section[0].field : field.value if field.label == "dkim"][0]
+}
+
 resource "porkbun_dns_record" "mail" {
   name    = "@"
   domain  = "jpatrick.io"
@@ -88,7 +101,7 @@ resource "porkbun_dns_record" "mail_verification" {
   name    = "@"
   domain  = "jpatrick.io"
   type    = "TXT"
-  content = "protonmail-verification=${var.protonmail_verification}"
+  content = "protonmail-verification=${local.protonmail_verification}"
 }
 resource "porkbun_dns_record" "spf" {
   name    = "@"
@@ -100,6 +113,6 @@ resource "porkbun_dns_record" "dkim" {
   name    = "protonmail._domainkey"
   domain  = "jpatrick.io"
   type    = "TXT"
-  content = "v=DKIM1; k=rsa; p=${var.protonmail_dkim}"
+  content = "v=DKIM1; k=rsa; p=${local.protonmail_dkim}"
 }
 
