@@ -1,11 +1,37 @@
+data "onepassword_item" "miniflux" {
+  vault = data.onepassword_vault.infrastructure.uuid
+  title = "miniflux"
+}
+
+# Locals for extracting Miniflux credentials from the OnePassword item.
+locals {
+  section = {
+    miniflux = {
+      admin    = [for section in data.onepassword_item.miniflux.section : section if section.label == "admin"]
+      database = [for section in data.onepassword_item.miniflux.section : section if section.label == "database"]
+    }
+  }
+  miniflux = {
+    admin = {
+      user = [for field in local.section.miniflux.admin[0].field : field.value if field.label == "user"][0]
+      pass = [for field in local.section.miniflux.admin[0].field : field.value if field.label == "password"][0]
+    }
+    database = {
+      owner = [for field in local.section.miniflux.database[0].field : field.value if field.label == "owner"][0]
+      pass  = [for field in local.section.miniflux.database[0].field : field.value if field.label == "password"][0]
+    }
+  }
+}
+
+# .env files
 locals {
   miniflux_env = join("\n",
     [
-      "ADMIN_USERNAME=${var.miniflux_admin_user}",
-      "ADMIN_PASSWORD=${var.miniflux_admin_pass}",
-      "DATABASE_URL=postgres://${var.miniflux_db_user}:${var.miniflux_db_pass}@miniflux_db/miniflux?sslmode=disable",
-      "POSTGRES_USER=${var.miniflux_db_user}",
-      "POSTGRES_PASSWORD=${var.miniflux_db_pass}",
+      "ADMIN_USERNAME=${local.miniflux.admin.user}",
+      "ADMIN_PASSWORD=${local.miniflux.admin.pass}",
+      "DATABASE_URL=postgres://${local.miniflux.database.owner}:${local.miniflux.database.pass}@miniflux_db/miniflux?sslmode=disable",
+      "POSTGRES_USER=${local.miniflux.database.owner}",
+      "POSTGRES_PASSWORD=${local.miniflux.database.pass}",
   ])
 }
 
