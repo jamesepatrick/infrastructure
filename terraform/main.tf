@@ -5,6 +5,10 @@ terraform {
       source  = "integrations/github"
       version = "~> 5.0"
     }
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = "2.1.2"
+    }
     porkbun = {
       source  = "cullenmcdermott/porkbun"
       version = ">= 0.3.0"
@@ -17,4 +21,10 @@ terraform {
       source = "tailscale/tailscale"
     }
   }
+}
+provider "onepassword" {
+}
+
+data "onepassword_vault" "infrastructure" {
+  name = "infrastructure"
 }
