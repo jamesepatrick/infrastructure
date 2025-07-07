@@ -23,18 +23,6 @@ variable "github_name" {
   description = "The name of the Github repository"
 }
 
-variable "tailscale_token" {
-  sensitive   = true
-  type        = string
-  description = "API token to access Hetzner's Cloud resources."
-}
-
-variable "tailscale_tailnet" {
-  sensitive   = true
-  type        = string
-  description = "API token to access Hetzner's Cloud resources."
-}
-
 variable "miniflux_admin_user" {
   type        = string
   description = "miniflux admin username"

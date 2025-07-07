@@ -2,9 +2,14 @@
 # - ./cloud-init.tf
 # - ../nix/tailscale.nix
 
+data "onepassword_item" "tailscale" {
+  vault = data.onepassword_vault.infrastructure.uuid
+  title = "tailscale"
+}
+
 provider "tailscale" {
-  api_key = var.tailscale_token
-  tailnet = var.tailscale_tailnet
+  tailnet = data.onepassword_item.tailscale.username
+  api_key = data.onepassword_item.tailscale.credential
 }
 
 resource "tailscale_tailnet_key" "prod" {
