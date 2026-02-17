@@ -14,6 +14,11 @@ locals {
   s3_backend_region      = "us-west-1"
 }
 
+module "github" {
+  source     = "./modules/github"
+  vault_uuid = data.onepassword_vault.infrastructure.uuid
+}
+
 module "s3_backend" {
   source      = "./modules/s3_backend"
   region      = local.s3_backend_region
