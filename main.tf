@@ -24,3 +24,8 @@ module "s3_backend" {
   region      = local.s3_backend_region
   bucket_name = local.s3_backend_bucket_name
 }
+
+module "hetzner" {
+  source     = "./modules/hetzner"
+  vault_uuid = data.onepassword_vault.infrastructure.uuid
+}
