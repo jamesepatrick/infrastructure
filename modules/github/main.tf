@@ -2,11 +2,9 @@ terraform {
   required_providers {
     onepassword = {
       source  = "1password/onepassword"
-      version = "3.0.1"
     }
     github = {
       source  = "integrations/github"
-      version = "6.9.0"
     }
   }
 }
