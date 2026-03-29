@@ -29,3 +29,9 @@ module "hetzner" {
   source     = "./modules/hetzner"
   vault_uuid = data.onepassword_vault.infrastructure.uuid
 }
+
+module "dns" {
+  source     = "./modules/dns"
+  node1_ip    = module.hetzner.node_ipv4
+  vault_uuid = data.onepassword_vault.infrastructure.uuid
+}
