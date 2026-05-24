@@ -25,9 +25,14 @@ module "s3_backend" {
   bucket_name = local.s3_backend_bucket_name
 }
 
-module "hetzner" {
-  source     = "./modules/hetzner"
+module "tailscale" {
+  source     = "./modules/tailscale"
   vault_uuid = data.onepassword_vault.infrastructure.uuid
+}
+
+module "hetzner" {
+  source               = "./modules/hetzner"
+  vault_uuid           = data.onepassword_vault.infrastructure.uuid
 }
 
 module "dns" {
