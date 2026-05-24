@@ -33,4 +33,6 @@ resource "github_repository" "infrastructure" {
   }
 }
 
-data "github_ssh_keys" "public_keys" {}
+data "github_user" "current" {
+  username = ""
+}
