@@ -20,12 +20,12 @@ provider "hcloud" {
 
 resource "hcloud_floating_ip" "primary_ip" {
   type              = "ipv4"
-  server_id         = hcloud_server.node.id
+  server_id         = hcloud_server.node0.id
   delete_protection = true
 }
 
 resource "hcloud_firewall" "firewall" {
-  name = "node"
+  name = "node0"
   rule {
     direction = "in"
     protocol  = "icmp"
@@ -63,18 +63,18 @@ resource "hcloud_firewall" "firewall" {
   }
 }
 
-resource "hcloud_server" "node" {
-  name         = "node2"
-  image        = "ubuntu-24.04"
-  location     = "nbg1"
-  server_type  = "cx23"
+resource "hcloud_server" "node0" {
+  name        = "node0"
+  image       = "centos-stream-10"
+  location    = "nbg1"
+  server_type = "cx23"
   firewall_ids = [hcloud_firewall.firewall.id]
 }
 
-resource "hcloud_volume" "data" {
-  name              = "data"
+resource "hcloud_volume" "node0" {
+  name              = "node0"
   size              = 30 #size in GB. Min is 10
-  server_id         = hcloud_server.node.id
+  server_id         = hcloud_server.node0.id
   automount         = true
   format            = "ext4"
   delete_protection = true
