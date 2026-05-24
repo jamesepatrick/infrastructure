@@ -1,0 +1,7 @@
+#cloud-config
+ runcmd:
+   - rpm --import https://pkgs.tailscale.com/stable/centos/10/repo.gpg
+   - dnf config-manager --add-repo https://pkgs.tailscale.com/stable/centos/10/tailscale.repo
+   - dnf install -y tailscale
+   - systemctl enable --now tailscaled
+   - tailscale up --authkey="${tailscale_auth_key}" --timeout=30s --json | tee /tmp/tailscale.log

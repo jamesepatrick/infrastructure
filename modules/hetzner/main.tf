@@ -63,11 +63,36 @@ resource "hcloud_firewall" "firewall" {
   }
 }
 
+locals {
+  cloudinit_parts = [
+    templatefile("${path.module}/cloud-init/setup.yaml.tftpl", {
+      ssh_authorized_keys = var.ssh_authorized_keys
+    }),
+    templatefile("${path.module}/cloud-init/tailscale.yaml.tftpl", {
+      tailscale_auth_key = var.tailscale_auth_key
+    }),
+  ]
+}
+data "cloudinit_config" "node0" {
+  gzip          = false
+  base64_encode = false
+
+  dynamic "part" {
+    for_each = local.cloudinit_parts
+    content {
+      content_type = "text/cloud-config"
+      content      = part.value
+      merge_type   = "list(append)+dict(recurse_list)+str(append)"
+    }
+  }
+}
+
 resource "hcloud_server" "node0" {
   name        = "node0"
   image       = "centos-stream-10"
   location    = "nbg1"
   server_type = "cx23"
+  user_data    = data.cloudinit_config.node0.rendered
   firewall_ids = [hcloud_firewall.firewall.id]
 }
 
