@@ -103,7 +103,7 @@ data "cloudinit_config" "node0" {
 }
 
 resource "terraform_data" "stablized_cloud_init_hash" {
-  input = sha512(stable_cloud_init)
+  input = sha512(stablized_cloud_init)
 }
 
 resource "hcloud_server" "node0" {
@@ -141,3 +141,59 @@ resource "hcloud_server" "node0" {
 * Auth key is baked into `user_data`, but since cloud-init only runs once on first boot, the server won't actually reconfigure if the key changes (it's idempotent for our use case).
   * Using `cloud-init clean` on deployed server will result in attempting to re-auth with an invalid key.
 * If machine is deauthed for Tailscale, the machine will need to be recreated.
+
+## DN 0002 NixOS Anywhere Cross-Architecture Deployment
+
+**ID:** DN 0002
+**Date:** 2026-06-10
+**Status:** Draft
+
+### Problem
+
+Deploying a `x86_64-linux` NixOS system from an `aarch64-darwin` (Apple Silicon) Mac using the `nixos-anywhere` all-in-one Terraform module fails with a platform mismatch error, even when `build_on_remote = true` is set.
+
+### Root Cause
+
+The all-in-one Terraform module has two separate stages. Stage 1 (local evaluation and build) always executes *locally* regardless of the `build_on_remote` flag — it invokes `nix build` to produce store paths for the system and disko partitioner derivations. The module fails here on `aarch64-darwin` when attempting to build `x86_64-linux` derivations natively. Only Stage 2 (remote installation) respects `build_on_remote`, but is never reached because Stage 1 fails first.
+
+### Options
+
+
+#### local-exec to nixos-anywhere
+
+Use the `nixos-anywhere` CLI directly via a `null_resource` and `local-exec` provisioner with the `--build-on-remote` flag. This skips the pre-build stage entirely and delegates all Nix evaluation and building to the remote `x86_64-linux` host:
+
+```hcl
+resource "null_resource" "nixos_anywhere" {
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command     = <<-EOT
+      nix run nixpkgs#nixos-anywhere -- \
+        --build-on-remote \
+        --flake "./nixos#node2" \
+        --target-host "root@${var.target_host}" \
+        --ssh-option "IdentityFile=$KEY_FILE" \
+        --ssh-option "StrictHostKeyChecking=no"
+    EOT
+
+    environment = {
+      DEPLOY_KEY      = data.onepassword_item.ssh.private_key
+      AUTHORIZED_KEYS = join("\n", var.authorized_keys)
+    }
+  }
+}
+```
+
+Using `nix run nixpkgs#nixos-anywhere` eliminates the need for manual CLI installation.
+
+#### Wait for Issue to be resolved
+
+See <https://github.com/nix-community/nixos-anywhere/issues/590>
+
+#### Stay on NixOS-Infect
+
+Activity seems pretty dead. Also slow & unstable for deploys.
+
+#### Winner: Don't use NixOS
+
+Use a more traditional distro. Setup with cloud-init for setup.

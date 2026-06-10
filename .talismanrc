@@ -8,7 +8,7 @@ fileignoreconfig:
 - filename: modules/hetzner/main.tf
   checksum: de3bebe7ebdb6c2e16a1104c801f34a0dc126ff877bf87ed3298995f50bdae27
 - filename: docs/development_notes.md
-  checksum: 35178ead4c8dbf723526b6d664c07a94b29ddc8acfd7ef7c293c16e361105378
+  checksum: 7db3251dae566706cdf2fe31f0f283e2f0aeea9727d608d922a857f1f8a3ff4f
 - filename: modules/github/.terraform.lock.hcl
   checksum: 60a9b0e9246caec282213ad7d4689b87370d92aeb62dad47d24e87f41bb392a9
 - filename: modules/dns/.terraform.lock.hcl
