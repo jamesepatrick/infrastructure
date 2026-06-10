@@ -31,16 +31,16 @@ module "tailscale" {
 }
 
 module "hetzner" {
-  source               = "./modules/hetzner"
-  vault_uuid           = data.onepassword_vault.infrastructure.uuid
-  tailscale_auth_key   = module.tailscale.auth_key
-  ssh_authorized_keys  = module.github.ssh_public_keys
+  source                   = "./modules/hetzner"
+  vault_uuid               = data.onepassword_vault.infrastructure.uuid
+  node0_tailscale_auth_key = module.tailscale.auth_key_node0
+  ssh_authorized_keys      = module.github.ssh_public_keys
 }
 
 module "dns" {
-  source     = "./modules/dns"
+  source = "./modules/dns"
 
-  node1_ip    = module.hetzner.node_ipv4
+  node1_ip   = module.hetzner.node_ipv4
   vault_uuid = data.onepassword_vault.infrastructure.uuid
 }
 

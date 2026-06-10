@@ -63,16 +63,25 @@ resource "hcloud_firewall" "firewall" {
   }
 }
 
+
+
 locals {
   cloudinit_parts = [
     templatefile("${path.module}/cloud-init/setup.yaml.tftpl", {
       ssh_authorized_keys = var.ssh_authorized_keys
     }),
     templatefile("${path.module}/cloud-init/tailscale.yaml.tftpl", {
-      tailscale_auth_key = var.tailscale_auth_key
+      tailscale_auth_key = var.node0_tailscale_auth_key
+    }),
+    templatefile("${path.module}/cloud-init/secrets.yaml.tftpl", {
     }),
   ]
+
+  # Create a version of the cloud-init content with the auth key redacted for stable hashing
+  # This allows us to always trigger a new auth key generation on each run, while only replacing the server when other content changes
+  stablized_cloud_init = replace(data.cloudinit_config.node0.rendered, "/${var.node0_tailscale_auth_key}/", "[REDACTED]")
 }
+
 data "cloudinit_config" "node0" {
   gzip          = false
   base64_encode = false
@@ -87,13 +96,23 @@ data "cloudinit_config" "node0" {
   }
 }
 
+resource "terraform_data" "stablized_cloud_init_hash" {
+  input = sha512(local.stablized_cloud_init)
+}
+
 resource "hcloud_server" "node0" {
-  name        = "node0"
-  image       = "centos-stream-10"
-  location    = "nbg1"
-  server_type = "cx23"
+  name         = "node0"
+  image        = "centos-stream-10"
+  location     = "nbg1"
+  server_type  = "cx23"
   user_data    = data.cloudinit_config.node0.rendered
   firewall_ids = [hcloud_firewall.firewall.id]
+
+  # Since the tailscale key is always regenerated, we want to ignore changes to the user_data that are solely due to the auth key changing.
+  lifecycle {
+    ignore_changes       = [user_data]
+    replace_triggered_by = [terraform_data.stablized_cloud_init_hash]
+  }
 }
 
 resource "hcloud_volume" "node0" {

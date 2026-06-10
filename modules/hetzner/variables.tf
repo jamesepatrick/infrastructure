@@ -9,8 +9,8 @@ variable "ssh_authorized_keys" {
   type        = list(string)
 }
 
-variable "tailscale_auth_key" {
-  description = "Tailscale shortlived auth key for joining the tailnet."
+variable "node0_tailscale_auth_key" {
+  description = "Single use Tailscale auth key for node0."
   type        = string
   sensitive   = true
 }

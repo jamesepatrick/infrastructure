@@ -27,6 +27,11 @@ provider "tailscale" {
   oauth_client_secret = local.tailscale.client_secret
 }
 
+# This value should also be updated. Due to the short lifespan of the auth keys, we will want to replace this every run.
+resource "terraform_data" "last_run_timestamp" {
+  input = timestamp()
+}
+
 resource "tailscale_tailnet_key" "node0" {
   reusable      = false
   ephemeral     = true
@@ -34,4 +39,7 @@ resource "tailscale_tailnet_key" "node0" {
   expiry        = 6000
   tags          = ["tag:prod"]
   description   = "node0 cloud-init auth key"
+  lifecycle {
+    replace_triggered_by = [terraform_data.last_run_timestamp]
+  }
 }

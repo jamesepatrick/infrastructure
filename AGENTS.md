@@ -96,6 +96,8 @@ All infrastructure changes are applied manually: `source .env.sh && tofu apply`.
 
 Three cloud-config files are merged with `list(append)+dict(recurse_list)+str(append)`. Order matters: `setup.yaml.tftpl` → `tailscale.yaml.tftpl` → `secrets.yaml.tftpl`.
 
+Auth key lifecycle and server recreation logic is managed via hash-based content normalization (see `docs/development_notes.md`).
+
 ## Development Notes
 
 All architectural decisions, problems encountered, and implemented solutions are documented in `docs/development_notes.md`. This file should be updated whenever:
