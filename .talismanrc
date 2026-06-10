@@ -1,0 +1,22 @@
+fileignoreconfig:
+- filename: modules/tailscale/main.tf
+  checksum: 2ca0d7fb5e06aa72aec016e8dd5c12b086322c919d391c16506e2456ea135291
+- filename: modules/tailscale/outputs.tf
+  checksum: 04c468e7d5f69a42deff6ede7a01fb963b082cbc6b9e9753824871279250cf62
+- filename: main.tf
+  checksum: 1905fa0dafa82da875f2645f7223ea007e1be460b0a9b83ffa215534ed4c6c97
+- filename: modules/hetzner/main.tf
+  checksum: de3bebe7ebdb6c2e16a1104c801f34a0dc126ff877bf87ed3298995f50bdae27
+- filename: docs/development_notes.md
+  checksum: 35178ead4c8dbf723526b6d664c07a94b29ddc8acfd7ef7c293c16e361105378
+- filename: modules/github/.terraform.lock.hcl
+  checksum: 60a9b0e9246caec282213ad7d4689b87370d92aeb62dad47d24e87f41bb392a9
+- filename: modules/dns/.terraform.lock.hcl
+  checksum: 1930732ad140797c83bbd4632b4526d5ae29e7bf724740330d4ef1139eddc83e
+- filename: modules/tailscale/.terraform.lock.hcl
+  checksum: 94047035ba84de133ae2774c4509857b4bb2318c140a2321ecf25184f5189856
+- filename: modules/hetzner/.terraform.lock.hcl
+  checksum: 33016560a09f7e53fe4cb947934a3c6348d5bca2540284c8593292122af058cb
+- filename: .terraform.lock.hcl
+  checksum: 37516f2c7d43cbc1c224759cc0e2d00a5cde4e88b6fdae6f8af73ae81ff73a50
+version: "1.0"

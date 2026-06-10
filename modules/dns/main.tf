@@ -1,26 +1,29 @@
 terraform {
+  required_version = ">= 1.11.0"
   required_providers {
     onepassword = {
-      source = "1password/onepassword"
+      source  = "1password/onepassword"
+      version = "3.3.1"
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
+      version = "~> 5"
     }
   }
 }
 
 
 locals {
-  zone_id = resource.cloudflare_zone.jpatrick_io.id
+  zone_id     = resource.cloudflare_zone.jpatrick_io.id
   dns_section = data.onepassword_item.cloudflare.section_map["dns"]
   dns = {
-    token = local.dns_section.field_map["token"].value
+    token      = local.dns_section.field_map["token"].value
     account_id = local.dns_section.field_map["account id"].value
   }
   protonmail_section = data.onepassword_item.protonmail.section_map[""]
   protonmail = {
     verification = local.protonmail_section.field_map["verification"].value
-    dkim = local.protonmail_section.field_map["dkim"].value
+    dkim         = local.protonmail_section.field_map["dkim"].value
   }
 }
 
@@ -52,7 +55,7 @@ resource "cloudflare_dns_record" "node0" {
   name    = "node0"
   content = "159.89.245.134"
   type    = "A"
-  ttl= 600
+  ttl     = 600
   proxied = false
 }
 
@@ -62,7 +65,7 @@ resource "cloudflare_dns_record" "node1" {
   name    = "node1"
   content = var.node1_ip
   type    = "A"
-  ttl= 600
+  ttl     = 600
   proxied = false
 }
 
@@ -73,7 +76,7 @@ resource "cloudflare_dns_record" "node1_services" {
   name    = each.key
   content = "node1.${resource.cloudflare_zone.jpatrick_io.name}"
   type    = "CNAME"
-  ttl= 600
+  ttl     = 600
   proxied = false
 }
 
@@ -84,7 +87,7 @@ resource "cloudflare_dns_record" "node0_services" {
   name    = each.key
   content = "node0.${resource.cloudflare_zone.jpatrick_io.name}"
   type    = "CNAME"
-  ttl= 600
+  ttl     = 600
   proxied = false
 }
 

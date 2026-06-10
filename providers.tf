@@ -9,22 +9,6 @@ terraform {
       source  = "opentofu/aws"
       version = "6.27.0"
     }
-    github = {
-      source  = "integrations/github"
-      version = "6.9.0"
-    }
-    hcloud = {
-      source  = "hetznercloud/hcloud"
-      version = "1.58.0"
-    }
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 5"
-    }
-    tailscale = {
-      source  = "tailscale/tailscale"
-      version = "~> 0.28"
-    }
   }
 }
 

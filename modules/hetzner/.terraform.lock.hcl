@@ -1,0 +1,62 @@
+# This file is maintained automatically by "tofu init".
+# Manual edits may be lost in future updates.
+
+provider "registry.opentofu.org/1password/onepassword" {
+  version     = "3.3.1"
+  constraints = "3.3.1"
+  hashes = [
+    "h1:Tg8bJ+ATy5pla6ZTn87lb3nIyiTJTgQHJdxOWQjFF9k=",
+    "zh:02d93a7f520ec69ad8944a68dcbf512e2f9920a6696628b8d05e6ad408309f35",
+    "zh:0f91a902da84470af95f0da4dc21127b84e23c856a431ff9ecfe45d9c6775ef0",
+    "zh:161bc55c466214a5d425ba85753d74ed5078212db965f726e6650d2e1524d633",
+    "zh:3de4a9f212e1046016a3ace8816e2cb15cfb7b9579161e468a08b9034d6a5f51",
+    "zh:730105346065ea3d2bd6acc6f5fe36f7b8a2b54c513d20a46bcd51d656e82bb4",
+    "zh:890df766e9b839623b1f0437355032a3c006226a6c200cd911e15ee1a9014e9f",
+    "zh:c29f6025d099bc8f1f96e7bb4cd66c5d07209b4141d2fd7720228cf20c9c8efd",
+    "zh:d8ea431d396986ca6baf033fa9aaccb73d6a9f9b7d42bea7af8dc73b9ef20297",
+  ]
+}
+
+provider "registry.opentofu.org/hashicorp/cloudinit" {
+  version     = "2.4.0"
+  constraints = "2.4.0"
+  hashes = [
+    "h1:Jvn+nE7fuyWfsXcJWCP1OhG1ohzuYs776U4UdjPf59c=",
+    "zh:1100d08add4583fa0c72ae61a4d90fe7e0e4c912800e8ce40736d5491cca6b94",
+    "zh:25671e5909082cdf564476a309ab958f4948a50819a6faea7f4768d77d4b2866",
+    "zh:27036ecde32c5f2fae4c965938554fc9085e4c04dc9a74f5aae6a91c06f3d738",
+    "zh:2eabfb9a357e21d906e6a4a3cba1299a4494694e90816c5d1c94253161244e4d",
+    "zh:46aff469c48be99db25a17b8aceff980d3253b5c43fe90e11df710d01ed15ef5",
+    "zh:58381b46c91f4dfea37c701896f1b7144373e9bd6fd1a2aaec561f9b69573156",
+    "zh:5e93d4b1600c3af7929eefccf092bf9a4f2a94bd2f29f5a2cebc98eede3fd88c",
+    "zh:67ad0360d17d5a2ade305bd3083caddd3c63b6d692434d249d3b71c6f7fcd0e4",
+    "zh:6e51f558aeb4271923f8822d900f2c8fe56f155f56f022366c22ec80c633e05e",
+    "zh:8be11e71a35964eecbcc36ad47a82dde0f51425567658cb21c9c6d5a9fce0494",
+    "zh:90de8354c3fffb6d0b9b663312652c98011022d0ccfac52900ce148bb263d200",
+    "zh:94c409a472d76e8a90f634dd804ff8399301bca103a7456f74d007d1fb22913f",
+    "zh:9e24975b2c085e1aee74b83799f9f0a3644ffcd9ae0c7d2840929d82153be167",
+    "zh:d24742682a35b618b4012c52a6201fda845dd706fe46e6c08a4611ea6abd6fc4",
+    "zh:ed6b04017882f68e0342b951e5c008e4852c7ed32c7d6fb81ced0437fa0a9742",
+  ]
+}
+
+provider "registry.opentofu.org/hetznercloud/hcloud" {
+  version     = "1.58.0"
+  constraints = "1.58.0"
+  hashes = [
+    "h1:bSXAi166sscoTB8LXKxIa1fngNyyQUddFEOpkZgkk0I=",
+    "zh:07cb06ca3f7eb6e103af2bfd269016ec20bd63f2594548e15e49805b6ddfca1a",
+    "zh:392b7fff9ba5fa618833831e5680c02680b4e45661a205cbf27cc711da15e279",
+    "zh:4f4c4f9add292cdebd437dcec5d271e891db9ecd7b5e5852f2ec314940b7d8a6",
+    "zh:5b2aa2005ba348611acdca214dcd40581935833cfef81eeae2c585fcd5f55f06",
+    "zh:a288503d0478321e9a8235931381636088648f7698bcd640744d23bb291a720a",
+    "zh:bc1499660dba9f631bcbad027655c68e968d2593f5cc76446f793b5fb37efa85",
+    "zh:c335412c1032a42bfc9fbb3de671a7503f10d52815dad4e226976aa25c317a91",
+    "zh:c4989256fac7e468a1f31ede73410a4bb8aee7c36dbb7fcba36379ebde173b91",
+    "zh:c602a7e9fecf838509b073cfa9a0b601e62b9db38841263fc9d5913060876092",
+    "zh:d52f67a469516a4787e99d9b0bd9cf35b7d03f3b166af2372a385210beb7f774",
+    "zh:dc58701b7fbc749fb15ced8949e7719b08718536a0f38cab24b4e8f0a4171cab",
+    "zh:dc77b35ff3d03133a9359a1b04abeee1678fbec01e18764b3c74f460afae1b03",
+    "zh:e9401f8640713ed173210bed114330c53439c6b6b0959088f52c4f05158a510c",
+  ]
+}

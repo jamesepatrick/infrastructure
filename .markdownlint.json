@@ -1,0 +1,19 @@
+{
+  "extends": "markdownlint/style/prettier",
+  "no-hard-tabs": true,
+  "line-length": false,
+  "no-trailing-spaces": true,
+  "no-multiple-spaces": true,
+  "blanks-around-headings": true,
+  "blanks-around-lists": true,
+  "blanks-around-blockquotes": true,
+  "blanks-around-tables": true,
+  "list-marker-space": true,
+  "list-indent": true,
+  "emphasis-markers": {
+    "style": "consistent"
+  },
+  "no-bare-urls": true,
+  "fenced-code-language": false,
+  "no-duplicate-heading": false
+}

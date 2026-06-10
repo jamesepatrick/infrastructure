@@ -1,10 +1,17 @@
 terraform {
+  required_version = ">= 1.11.0"
   required_providers {
     hcloud = {
-      source = "hetznercloud/hcloud"
+      source  = "hetznercloud/hcloud"
+      version = "1.58.0"
+    }
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = "2.4.0"
     }
     onepassword = {
-      source = "1password/onepassword"
+      source  = "1password/onepassword"
+      version = "3.3.1"
     }
   }
 }

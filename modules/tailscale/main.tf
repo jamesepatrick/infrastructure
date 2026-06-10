@@ -1,10 +1,13 @@
 terraform {
+  required_version = ">= 1.11.0"
   required_providers {
     onepassword = {
-      source = "1password/onepassword"
+      source  = "1password/onepassword"
+      version = "3.3.1"
     }
     tailscale = {
-      source = "tailscale/tailscale"
+      source  = "tailscale/tailscale"
+      version = "~> 0.28"
     }
   }
 }
