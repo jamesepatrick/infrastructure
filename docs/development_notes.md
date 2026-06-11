@@ -197,3 +197,116 @@ Activity seems pretty dead. Also slow & unstable for deploys.
 #### Winner: Don't use NixOS
 
 Use a more traditional distro. Setup with cloud-init for setup.
+
+## DN 0003 Ephemeral Resources with 1Password in OpenTofu
+
+**ID:** DN 0003
+**Date:** 2026-06-11
+**Status:** Blocked - awaiting upstream provider support
+**Blocked By:**
+
+* <https://github.com/1Password/terraform-provider-onepassword/issues/330>
+* <https://github.com/1Password/terraform-provider-onepassword/pull/367>
+
+### Problem
+
+OpenTofu stores all resource and data source attributes in state files. Using `data "onepassword_item"` resources exposes credentials in `terraform.tfstate`, creating a security risk even with encrypted S3 backend storage. State files may be accessed by CI/CD systems, backed up, cached locally, or accidentally exposed.
+
+### Solution
+
+OpenTofu 1.11.0 introduced `ephemeral` resources - resources whose values exist only in memory during plan/apply and are never persisted to state. The 1Password provider v3.3.1+ supports `ephemeral "onepassword_item"`, enabling secret retrieval from 1Password vaults without storing credentials in state.
+
+### Implementation Pattern
+
+Basic credential extraction:
+
+```hcl
+ephemeral "onepassword_item" "service" {
+  vault = var.vault_uuid
+  title = "service-name"
+}
+
+provider "example_provider" {
+  token = ephemeral.onepassword_item.service.credential
+}
+```
+
+**Requirements:**
+
+* OpenTofu >= 1.11.0
+* 1Password provider >= 3.3.1
+* `OP_SERVICE_ACCOUNT_TOKEN` environment variable (set via `source .env.sh`)
+* `vault_uuid` threaded from root as sensitive variable
+
+### Benefits
+
+* **Zero secrets in state**: Credentials never written to `terraform.tfstate`
+* **No `.tfvars` files**: Eliminates need for gitignored credential files
+* **Centralized secret management**: Single source of truth in 1Password infrastructure vault
+* **Audit trail**: 1Password service account tracks all secret access
+
+### Current Blocker
+
+**Ephemeral `onepassword_item` resources lack section support.** The ephemeral schema is missing critical attributes available in the `data` source:
+
+* `section` (array of section objects)
+* `section_map` (map of section name → section object with `field_map`)
+
+This prevents accessing structured secrets organized in 1Password sections, which is how most multi-credential services are stored.
+
+**Example error:**
+
+```
+Error: Unsupported attribute
+  on modules/dns/main.tf line 18
+  dns_section = ephemeral.onepassword_item.cloudflare.section_map["dns"]
+
+This object has no argument, nested block, or exported attribute named "section_map".
+```
+
+### Workarounds Considered
+
+#### Option 1: Restructure to username/password fields
+
+* Store all credentials in top-level `username`/`password` fields only
+* **Rejected**: Misaligns with 1Password's organizational model. Most services require multiple credentials (client_id, client_secret, account_id, tokens, verification codes) naturally organized in sections.
+
+#### Option 2: Wait for upstream fix (current approach)
+
+* Block migration until PR #367 is merged and released
+* Re-implement section-based access once provider supports it
+
+### Migration Impact
+
+Once unblocked, this pattern will replace all `data "onepassword_item"` declarations across:
+
+* **modules/github** - GitHub token and repository metadata (section: "repo")
+* **modules/hetzner** - Hetzner Cloud API token
+* **modules/dns** - Cloudflare credentials (section: "dns") and ProtonMail verification records
+* **modules/tailscale** - OAuth client credentials (section: "oauth")
+
+All modules instantiate their own providers using credentials fetched directly from 1Password (non-standard but intentional per repository pattern).
+
+### Future Implementation
+
+Once `section_map` is available in ephemeral resources:
+
+```hcl
+ephemeral "onepassword_item" "tailscale" {
+  vault = var.vault_uuid
+  title = "tailscale"
+}
+
+locals {
+  tailscale_section = ephemeral.onepassword_item.tailscale.section_map["oauth"]
+  tailscale = {
+    client_id     = local.tailscale_section.field_map["client_id"].value
+    client_secret = local.tailscale_section.field_map["client_secret"].value
+  }
+}
+
+provider "tailscale" {
+  oauth_client_id     = local.tailscale.client_id
+  oauth_client_secret = local.tailscale.client_secret
+}
+```
