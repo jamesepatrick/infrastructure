@@ -2,11 +2,19 @@
 package_update: true
 package_upgrade: true
 
+yum_repos:
+  epel:
+    name: "Extra Packages for Enterprise Linux"
+    baseurl: "https://dl.fedoraproject.org/pub/epel/$releasever/Everything/$basearch"
+    enabled: true
+    gpgcheck: true
+    gpgkey: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$releasever"
+
 packages:
   - curl
   - dnf-automatic
   - git
-  - jq
+  - ripgrep
   - tar
   - tmux
   - unzip
@@ -45,7 +53,5 @@ write_files:
       debuglevel = 1
 runcmd:
   - systemctl enable --now dnf-automatic.timer
-  - dnf install -y epel-release || true
-  - timedatectl set-timezone UTC
 
 final_message: "The system is finally up, after $UPTIME seconds"
