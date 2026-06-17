@@ -30,7 +30,8 @@ provider "tailscale" {
   oauth_client_secret = local.tailscale.client_secret
 }
 
-# This value should also be updated. Due to the short lifespan of the auth keys, we will want to replace this every run.
+# This value will always replace. Due to the short lifespan of the auth keys, we will want to replace this every run.
+# See DN 0001 for more details
 resource "terraform_data" "last_run_timestamp" {
   input = timestamp()
 }
