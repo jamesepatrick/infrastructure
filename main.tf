@@ -26,8 +26,9 @@ module "s3_backend" {
 }
 
 module "tailscale" {
-  source     = "./modules/tailscale"
-  vault_uuid = data.onepassword_vault.infrastructure.uuid
+  source          = "./modules/tailscale"
+  vault_uuid      = data.onepassword_vault.infrastructure.uuid
+  change_triggers = [module.hetzner.node0_trigger]
 }
 
 module "hetzner" {

@@ -46,3 +46,35 @@ resource "tailscale_tailnet_key" "node0" {
     replace_triggered_by = [terraform_data.last_run_timestamp]
   }
 }
+
+# There is not a good way to de-auth device to prevent names collision.
+# This is a workaround to delete the device with the same name as the one being created in this module.
+# Require read/write for devices:core scope with prod tag for the oauth token.
+# See DN 0004 for more details
+resource "terraform_data" "tailscale_cleanup" {
+  for_each = { for trigger in var.change_triggers : trigger.name => trigger.id }
+
+  triggers_replace = {
+    change_trigger = "${each.key}:${each.value}"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOF
+      TOKEN=$(curl -sS -d "client_id=$TS_CLIENT_ID" -d "client_secret=$TS_CLIENT_SECRET" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
+      IDS=$(curl -sS -H "Authorization: Bearer $TOKEN" "https://api.tailscale.com/api/v2/tailnet/-/devices" |  jq -r '.devices[] | select(.hostname == "${self.output.name}") | .id')
+      echo "$IDS" | xargs -I {} curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "https://api.tailscale.com/api/v2/device/{}"
+    EOF
+    environment = {
+      TS_CLIENT_ID     = self.output.client_id
+      TS_CLIENT_SECRET = self.output.client_secret
+    }
+  }
+
+  input = {
+    name          = each.key
+    id            = each.value
+    client_id     = local.tailscale.client_id
+    client_secret = local.tailscale.client_secret
+  }
+}
