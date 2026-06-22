@@ -21,6 +21,11 @@ data "onepassword_item" "hetzner" {
   title = "hetzner"
 }
 
+data "onepassword_item" "node0_service_account" {
+  vault = var.vault_uuid
+  title = "node0 service account"
+}
+
 provider "hcloud" {
   token = data.onepassword_item.hetzner.credential
 }
@@ -71,6 +76,20 @@ resource "hcloud_firewall" "firewall" {
 }
 
 
+locals {
+  node0_secret_mappings = [
+    { op_ref = "foo" },
+    # Example secret mappings - add your secrets here
+    # {
+    #   op_ref        = "op://node0/database/password"
+    #   docker_secret = "db_password"
+    # },
+    # {
+    #   op_ref        = "op://node0/api/token"
+    #   docker_secret = "api_token"
+    # },
+  ]
+}
 
 locals {
   cloudinit_parts = [
@@ -81,12 +100,13 @@ locals {
       tailscale_auth_key = var.node0_tailscale_auth_key
     }),
     templatefile("${path.module}/cloud-init/secrets.yaml.tftpl", {
+      op_service_account_token = data.onepassword_item.node0_service_account.credential
+      secret_mappings_yaml     = yamlencode({ secrets = local.node0_secret_mappings })
+    }),
+    templatefile("${path.module}/cloud-init/containers.yaml.tftpl", {
     }),
   ]
 
-  # Create a version of the cloud-init content with the auth key redacted for stable hashing
-  # This allows us to always trigger a new auth key generation on each run, while only replacing the server when other content changes
-  stablized_cloud_init = replace(data.cloudinit_config.node0.rendered, "/${var.node0_tailscale_auth_key}/", "[REDACTED]")
 }
 
 data "cloudinit_config" "node0" {
@@ -103,8 +123,15 @@ data "cloudinit_config" "node0" {
   }
 }
 
-resource "terraform_data" "stablized_cloud_init_hash" {
-  input = sha512(local.stablized_cloud_init)
+resource "terraform_data" "modification_trigger" {
+  input = {
+    cloudinit_folder_hash = sha512(join("", [
+      for f in fileset("${path.module}/cloud-init", "*.tftpl") : file("${path.module}/cloud-init/${f}")
+    ]))
+    ssh_authorized_keys      = var.ssh_authorized_keys
+    op_service_account_token = data.onepassword_item.node0_service_account.credential
+    secret_mappings_yaml     = yamlencode({ secrets = local.node0_secret_mappings })
+  }
 }
 
 resource "hcloud_server" "node0" {
@@ -118,7 +145,7 @@ resource "hcloud_server" "node0" {
   # Since the tailscale key is always regenerated, we want to ignore changes to the user_data that are solely due to the auth key changing.
   lifecycle {
     ignore_changes       = [user_data]
-    replace_triggered_by = [terraform_data.stablized_cloud_init_hash]
+    replace_triggered_by = [terraform_data.modification_trigger]
   }
 }
 
